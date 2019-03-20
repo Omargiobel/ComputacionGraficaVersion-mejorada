@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>sistema solar</title>
+        <style>
+            html, body { margin: 0; padding: 0; overflow: hidden; }
+            #info {
+                position: absolute;
+                padding: 10px;
+                width: 100%;
+                text-align: center;
+                color: #FFFFFF;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="info">Sistema solar
+        </div>
+    <script src="js/three.min.js"></script>
+    <script>
+		var scene, aspect, camera, renderer;
+		var geometry;
+		var geometry1;
+		var object;
+		var object1;
+		var object2;
+		var object3;
+		var object4;
+		var startTime = Date.now();
+				
+		var upArrow = false;
+		var downArrow = false;
+		var leftArrow = false;
+		var rightArrow = false;
+		var sButton = false;
+		var wButton = false;
+		var xAxis = true;
+		var yAxis = false;
+		var zAxis = false;
+		
+		init();
+		animate();
+	
+		function init(){
+			scene = new THREE.Scene();
+			aspect = window.innerWidth / window.innerHeight;
+			camera = new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000);
+			renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+				  			
+			//EVENTOS DE TECLADO
+			
+		
+			var size = 10;
+			var arrowSize = 1;
+			var divisions = size;
+			var origin = new THREE.Vector3( 0, 0, 0 );
+			var x = new THREE.Vector3( 1, 0, 0 );
+			var y = new THREE.Vector3( 0, 1, 0 );
+		  	var z = new THREE.Vector3( 0, 0, 1 );
+			var color1 = new THREE.Color( 0xFFFFFF );
+		  	var color2 = new THREE.Color( 0x333333 );
+		  	var colorR = new THREE.Color( 0xAA0000 );
+		  	var colorG = new THREE.Color( 0x00AA00 );
+		  	var colorB = new THREE.Color( 0x0000AA );
+			var colorRd = new THREE.Color( 0xAA6666 );
+		  	var colorGd = new THREE.Color( 0x66AA66 );
+		  	var colorBd = new THREE.Color( 0x6666AA );
+		  
+		  	//CREAR LAS GRILLAS PARA EL ESCENARIO
+		  	var axesHelper = new THREE.AxesHelper( size );
+		  	var gridHelperXY = new THREE.GridHelper( size, divisions, color1, color1);
+		  	var gridHelperXZ = new THREE.GridHelper( size, divisions, color2, color2 );
+		  	var gridHelperYZ = new THREE.GridHelper( size, divisions, color2, color2 );
+             var frustumSize=5;
+            //ROTARLAS PARA QUE QUEDEN EN EL ESPACIO ADECUADO
+            gridHelperXY.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+            gridHelperXZ.rotateOnWorldAxis ( y, THREE.Math.degToRad(90) );
+            gridHelperYZ.rotateOnWorldAxis ( z, THREE.Math.degToRad(90) );
+            
+            //CREAR LAS FLECHAS QUE INDICAN LOS EJES DE COORDENADAS 3D
+            var arrowX = new THREE.ArrowHelper( x, origin, arrowSize, colorR );
+            var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
+            var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
+			
+			
+			//CREAR LAS GEOMETRÍAS
+			geometry = new THREE.SphereGeometry( 0.2, 32, 32 );
+		    geometry1 = new THREE.SphereBufferGeometry( 1, 32, 32 );
+			geometry2 = new THREE.SphereBufferGeometry( 0.3, 32, 32 );
+            geometry3 = new THREE.SphereBufferGeometry( 0.5, 32, 32 );
+            geometry4 = new THREE.SphereBufferGeometry( 0.4, 32, 32 );
+            geometry5 = new THREE.SphereBufferGeometry( 0.2, 32, 32 );
+			//CREAR LOS MATERIALES
+		 var material = new THREE.MeshBasicMaterial( {color: 0xffff00} ); 
+				//CREAR LOS MATERIALES
+		 var material1 = new THREE.MeshBasicMaterial( {color: 0x4b3621} ); 
+			//CREAR LOS OBJETOS
+			object = new THREE.Mesh( geometry1, material );	
+									
+			object1 = new THREE.Mesh( geometry, material1 );
+			object1.translateOnAxis( x, 5.5 );									
+			object2 = new THREE.Mesh( geometry2, material1 );
+			object2.translateOnAxis( x, -2 );
+			object3 = new THREE.Mesh( geometry3, material1 );
+			object3.translateOnAxis( z, 4 );
+			object4 = new THREE.Mesh( geometry4, material1 );
+			object4.translateOnAxis( z, -6 );
+		    object5 = new THREE.Mesh( geometry5, material1 );
+			object5.translateOnAxis( z, -2.5 );
+            
+			var width = 16.0;
+			var height = 9.0;
+			var FOV = 45.0;			//Ángulo de apertura
+			var sinFOV = Math.sin((FOV/2.0)*Math.PI/180);
+			var aR = width/height;	//AspectRatio
+			var nearZ = 1;
+			var farZ = 10;
+			var COA = new THREE.Vector3(-5,2,0);
+			var planeGeometry = new THREE.PlaneGeometry(width, height);
+            
+            camera2 = new THREE.OrthographicCamera( frustumSize * aspect / - 2,  //left — Camera frustum left plane.
+            frustumSize * aspect / 2,    //right — Camera frustum right plane.
+            frustumSize / 2,    //top — Camera frustum top plane.
+            frustumSize / - 2, //bottom — Camera frustum bottom plane.
+             1,               //near — Camera frustum near plane.
+             10 );
+
+            camera2.position.z=2;
+
+			camera3 = new THREE.OrthographicCamera( frustumSize * aspect / - 2,  //left — Camera frustum left plane.
+            frustumSize * aspect / 2,    //right — Camera frustum right plane.
+            frustumSize / 2,     //top — Camera frustum top plane.
+            frustumSize / - 2,//bottom — Camera frustum bottom plane.
+            1,               //near — Camera frustum near plane.
+            10 );
+
+		  camera3.rotateY((Math.PI*90)/180);
+		  camera3.position.z=-2;
+		  camera3.position.x=8;
+
+		camera4 = new THREE.OrthographicCamera( frustumSize * aspect / - 2,  //left — Camera frustum left plane.
+        frustumSize * aspect / 2,    //right — Camera frustum right plane.
+        frustumSize / 2,         //top — Camera frustum top plane.
+        frustumSize / - 2,           //bottom — Camera frustum bottom plane.
+        1,                     //near — Camera frustum near plane.
+        10 );
+
+		   
+				
+
+
+	  	//AGREGAR A LA ESCENA
+         
+			scene.add(camera,camera2,camera3);
+			
+			//MOVER LA CÁMARA
+			camera.position.x = 20;
+			camera.position.y = 10;	 
+		  	camera.position.z =  10;
+		  	camera.lookAt( origin );
+			
+							
+		  	//AGREGAR A LA ESCENA
+            scene.add( gridHelperXZ );
+		  	scene.add( arrowX );	
+		  	scene.add( arrowY );	
+		  	scene.add( arrowZ );	
+			scene.add( object );
+			scene.add( object1 );
+			scene.add( object2 );
+			scene.add( object3 );
+			scene.add( object4 );
+            scene.add( object5 );
+			
+			//MOVER LA CAMARA
+			camera.position.x = 10;
+			camera.position.y = 10;	 
+		  	camera.position.z = 10;			
+		  	camera.lookAt( origin );
+			}
+    
+    function animate() {
+        render();
+        requestAnimationFrame( animate );
+    }
+    
+    function render(){
+        var dtime = Date.now()-startTime;
+		var t=0.01;
+        var t1=0.02;
+		
+		
+		//ROTACIÓN EN EJE Y
+		
+		var a = new THREE.Euler(0,t,0,'XYZ');
+        var b = new THREE.Euler(0,t1,0,'XYZ');
+	    object1.position.applyEuler(a);
+		object2.position.applyEuler(a);
+		object3.position.applyEuler(b);
+		object4.position.applyEuler(a);
+        object5.position.applyEuler(b);
+        renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+	    renderer.setScissor(0, 0, window.innerWidth, window.innerHeight);
+	    renderer.render(scene , camera);
+              
+        renderer.setViewport(0, 0, window.innerWidth/3, window.innerHeight/3);
+	    renderer.setScissor(0, 0, window.innerWidth/3, window.innerHeight/3);
+        renderer.setScissorTest( true );
+	   renderer.render(scene , camera2);
+              
+	   renderer.setViewport(window.innerWidth/3, 0, window.innerWidth/3, window.innerHeight/3);
+	   renderer.setScissor(window.innerWidth/3, 0, window.innerWidth/3, window.innerHeight/3);
+       renderer.setScissorTest( true );
+	   renderer.render(scene , camera3);
+              
+       renderer.setViewport(2*(window.innerWidth/3), 0,(window.innerWidth/3), window.innerHeight/3);
+	   renderer.setScissor(2*(window.innerWidth/3), 0, window.innerWidth/3, window.innerHeight/3);
+       renderer.setScissorTest( true );
+	   renderer.render(scene , camera4);
+		
+		// camera.position.x = 10*Math.cos(dtime/10000);
+        //camera.position.z = 10*Math.sin(dtime/10000);
+              camera.lookAt( 0, 3, 0 );
+              
+        
+        
+        camera.lookAt( 0, 0, 0 );
+        renderer.render( scene, camera );
+		
+    }
+    </script>
+  </body>
+</html>
